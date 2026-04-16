@@ -20,7 +20,7 @@
   "dependencies": {
     "@liquid-bricks/lib-nats-context": "github:LiquidBricks/lib-nats-context#345a6a5d748e253bee39e3dd1ca33719a35f9ad3",
     "@liquid-bricks/lib-nats-subject": "github:LiquidBricks/lib-nats-subject#5958dab01e5934267773f47aa280337547f52474",
-    "@liquid-bricks/spec-domain": "github:LiquidBricks/spec-domain#d579ea8f20d0fce79e62daf728da9e21bdc2470a",
+    "@liquid-bricks/spec-domain": "github:LiquidBricks/spec-domain#01325ea7f748373212c0dc0adf6de5cc591c9c2e",
     "graphql": "^16.12.0",
     "ulid": "^3.0.0"
   }
