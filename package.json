@@ -1,0 +1,27 @@
+{
+  "name": "@liquid-bricks/iface-graphql",
+  "version": "0.1.0",
+  "description": "GraphQL schema module for interface components",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./schema": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "common/",
+    "mutation/",
+    "query/"
+  ],
+  "scripts": {
+    "test": "node --test \"test/**/*.mjs\""
+  },
+  "dependencies": {
+    "@liquid-bricks/lib-nats-context": "github:LiquidBricks/lib-nats-context#345a6a5d748e253bee39e3dd1ca33719a35f9ad3",
+    "@liquid-bricks/lib-nats-subject": "github:LiquidBricks/lib-nats-subject#5958dab01e5934267773f47aa280337547f52474",
+    "@liquid-bricks/spec-domain": "github:LiquidBricks/spec-domain#d579ea8f20d0fce79e62daf728da9e21bdc2470a",
+    "graphql": "^16.12.0",
+    "ulid": "^3.0.0"
+  }
+}

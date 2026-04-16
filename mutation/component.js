@@ -1,6 +1,6 @@
 import { GraphQLBoolean, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql'
 import { ulid } from 'ulid'
-import { create as createBasicSubject } from '@liquid-bricks/shared-providers/subject/create/basic'
+import { create as createBasicSubject } from '@liquid-bricks/lib-nats-subject/create/basic'
 
 const componentSpecCreateInstancePayloadType = new GraphQLObjectType({
   name: 'ComponentSpecCreateInstancePayload',

@@ -44,12 +44,15 @@ const { connectionType: ComponentSpecImportsConnection } = createConnectionType(
 export const field = {
   type: new GraphQLNonNull(ComponentSpecImportsConnection),
   resolve: async (id, _args, { g }) => {
-    const edgeIds = await g.V(id).outE(domain.edge.has_import.component_component.constants.LABEL).id()
+    const importRefIds = await g.V(id).out(domain.edge.has_import.component_importRef.constants.LABEL).id()
     const imports = await Promise.all(
-      edgeIds.map(async (edgeId) => {
-        const propsSnapshot = await g.E(edgeId).valueMap('alias')
+      importRefIds.map(async (importRefId) => {
+        const propsSnapshot = await g.V(importRefId).valueMap('alias')
         const props = Array.isArray(propsSnapshot) ? propsSnapshot[0] : null
-        const [componentId] = await g.E(edgeId).inV().id()
+        const [componentId] = await g
+          .V(importRefId)
+          .out(domain.edge.import_of.importRef_component.constants.LABEL)
+          .id()
         if (!componentId) return null
         return {
           id: componentId,

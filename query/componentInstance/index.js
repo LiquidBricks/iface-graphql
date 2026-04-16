@@ -13,6 +13,45 @@ const { connectionType: ComponentSpecInstanceNodeConnection } = createConnection
   componentSpecDataNodeType,
 )
 
+export const componentSpecInstanceGateType = new GraphQLObjectType({
+  name: 'ComponentSpecInstanceGate',
+  fields: () => ({
+    alias: {
+      type: GraphQLString,
+      resolve: (source) => source?.alias ?? null,
+    },
+    instanceId: {
+      type: GraphQLString,
+      resolve: async (source, _args, { g }) => fetchVertexProp(source, 'instanceId', g),
+    },
+    createdAt: {
+      type: GraphQLString,
+      resolve: async (source, _args, { g }) => fetchVertexProp(source, 'createdAt', g),
+    },
+    updatedAt: {
+      type: GraphQLString,
+      resolve: async (source, _args, { g }) => fetchVertexProp(source, 'updatedAt', g),
+    },
+    componentSpec: {
+      type: componentSpecType,
+      resolve: async (source, _args, { g }) => {
+        const nodeId = resolveNodeId(source);
+        if (!nodeId) return null;
+        return (await g.V(nodeId).out(domain.edge.instance_of.componentInstance_component.constants.LABEL).id()).shift();
+      },
+    },
+    state: {
+      type: GraphQLString,
+      resolve: async (source, _args, { g }) => fetchInstanceState(resolveNodeId(source), g),
+    },
+  }),
+});
+
+const { connectionType: ComponentSpecInstanceGateConnection } = createConnectionType(
+  'ComponentSpecInstanceGate',
+  componentSpecInstanceGateType,
+)
+
 export const componentSpecInstanceImportType = new GraphQLObjectType({
   name: 'ComponentSpecInstanceImport',
   fields: () => ({
@@ -116,6 +155,13 @@ export const componentSpecInstanceType = new GraphQLObjectType({
         return toConnection(nodes);
       },
     },
+    gates: {
+      type: new GraphQLNonNull(ComponentSpecInstanceGateConnection),
+      resolve: async (id, _args, { g }) => {
+        const nodes = await loadInstanceGates({ g, instanceId: id });
+        return toConnection(nodes);
+      },
+    },
   }),
 })
 
@@ -190,20 +236,58 @@ async function loadInstanceStateNodes({ g, instanceId, edgeLabel }) {
 
 async function loadInstanceImports({ g, instanceId }) {
   if (!g || !instanceId) return [];
-  const edgeIds = await g
+  const importRefInstanceIds = await g
     .V(instanceId)
-    .outE(domain.edge.uses_import.componentInstance_componentInstance.constants.LABEL)
+    .out(domain.edge.uses_import.componentInstance_importInstanceRef.constants.LABEL)
     .id();
 
   const nodes = await Promise.all(
-    edgeIds.map(async (edgeId) => {
-      const [edgePropsSnapshot] = await g.E(edgeId).valueMap('alias');
-      const edgeProps = Array.isArray(edgePropsSnapshot) ? edgePropsSnapshot[0] : null;
-      const [importedInstanceId] = await g.E(edgeId).inV().id();
+    importRefInstanceIds.map(async (importRefInstanceId) => {
+      const [importRefId] = await g
+        .V(importRefInstanceId)
+        .out(domain.edge.uses_import.importInstanceRef_importRef.constants.LABEL)
+        .id();
+      const [aliasValueMap] = importRefId ? await g.V(importRefId).valueMap('alias') : [];
+      const [importedInstanceId] = await g
+        .V(importRefInstanceId)
+        .out(domain.edge.uses_import.importInstanceRef_componentInstance.constants.LABEL)
+        .id();
       if (!importedInstanceId) return null;
       return {
         nodeId: importedInstanceId,
-        alias: unwrapValue(edgeProps?.alias ?? edgeProps),
+        alias: unwrapValue(aliasValueMap?.alias ?? aliasValueMap),
+      };
+    }),
+  );
+
+  return nodes.filter(Boolean);
+}
+
+async function loadInstanceGates({ g, instanceId }) {
+  if (!g || !instanceId) return [];
+  const gateRefInstanceIds = await g
+    .V(instanceId)
+    .out(domain.edge.uses_gate.componentInstance_gateInstanceRef.constants.LABEL)
+    .id();
+
+  const nodes = await Promise.all(
+    gateRefInstanceIds.map(async (gateRefInstanceId) => {
+      const [gateRefId] = await g
+        .V(gateRefInstanceId)
+        .out(domain.edge.uses_gate.gateInstanceRef_gateRef.constants.LABEL)
+        .id();
+      const [aliasValueMap] = gateRefId ? await g.V(gateRefId).valueMap('alias') : [];
+      const alias = unwrapValue(aliasValueMap?.alias ?? aliasValueMap);
+
+      const [gateInstanceId] = await g
+        .V(gateRefInstanceId)
+        .out(domain.edge.uses_gate.gateInstanceRef_componentInstance.constants.LABEL)
+        .id();
+      if (!gateInstanceId) return null;
+
+      return {
+        nodeId: gateInstanceId,
+        alias,
       };
     }),
   );
