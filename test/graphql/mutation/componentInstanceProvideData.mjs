@@ -42,7 +42,7 @@ test('componentInstanceProvideData publishes typed payload', async () => {
     .ns('component-service')
     .entity('componentInstance')
     .channel('evt')
-    .action('result_computed')
+    .action('computeResultDone')
     .version('v1')
     .build()
 
