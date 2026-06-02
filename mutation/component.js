@@ -2,6 +2,9 @@ import { GraphQLBoolean, GraphQLNonNull, GraphQLObjectType, GraphQLString } from
 import { ulid } from 'ulid'
 import { create as createBasicSubject } from '@liquid-bricks/lib-nats-subject/create/basic'
 
+import { events as natsEvents } from '@liquid-bricks/lib-nats-subject/events/nats'
+
+
 const componentSpecCreateInstancePayloadType = new GraphQLObjectType({
   name: 'ComponentSpecCreateInstancePayload',
   fields: () => ({
@@ -16,13 +19,8 @@ export const componentSpecCreateInstanceField = {
   },
   resolve: async (_parent, { componentHash }, { natsContext }) => {
     const instanceId = ulid();
-    const subject = createBasicSubject()
+    const subject = createBasicSubject(natsEvents['*'].component_service['*']['*'].cmd.componentInstance.create.v1['*'])
       .env('prod')
-      .ns('component-service')
-      .entity('componentInstance')
-      .channel('cmd')
-      .action('create')
-      .version('v1')
 
     await natsContext.publish(
       subject.build(),
@@ -45,13 +43,8 @@ export const componentInstanceStartField = {
     instanceId: { type: new GraphQLNonNull(GraphQLString) },
   },
   resolve: async (_parent, { instanceId }, { natsContext }) => {
-    const subject = createBasicSubject()
+    const subject = createBasicSubject(natsEvents['*'].component_service['*']['*'].cmd.componentInstance.start.v1['*'])
       .env('prod')
-      .ns('component-service')
-      .entity('componentInstance')
-      .channel('cmd')
-      .action('start')
-      .version('v1')
 
     await natsContext.publish(
       subject.build(),
@@ -89,13 +82,8 @@ export const componentInstanceProvideDataField = {
       throw new Error('Type is required for provide data');
     }
 
-    const subject = createBasicSubject()
+    const subject = createBasicSubject(natsEvents['*'].component_service['*']['*'].evt.componentInstance.computeResultDone.v1['*'])
       .env('prod')
-      .ns('component-service')
-      .entity('componentInstance')
-      .channel('evt')
-      .action('computeResultDone')
-      .version('v1')
 
     await natsContext.publish(
       subject.build(),

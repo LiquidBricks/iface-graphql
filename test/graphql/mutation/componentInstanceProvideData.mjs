@@ -4,6 +4,9 @@ import { create as createBasicSubject } from '@liquid-bricks/lib-nats-subject/cr
 import { schema } from '../../../index.js'
 import { runGql } from '../../util/runGql.js'
 
+import { events as natsEvents } from '@liquid-bricks/lib-nats-subject/events/nats'
+
+
 test('componentInstanceProvideData publishes typed payload', async () => {
   const published = []
   const natsContext = {
@@ -37,13 +40,8 @@ test('componentInstanceProvideData publishes typed payload', async () => {
 
   const { subject, data } = published[0]
   const parsed = JSON.parse(data)
-  const expectedSubject = createBasicSubject()
+  const expectedSubject = createBasicSubject(natsEvents['*'].component_service['*']['*'].evt.componentInstance.computeResultDone.v1['*'])
     .env('prod')
-    .ns('component-service')
-    .entity('componentInstance')
-    .channel('evt')
-    .action('computeResultDone')
-    .version('v1')
     .build()
 
   assert.equal(subject, expectedSubject)
