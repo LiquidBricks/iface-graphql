@@ -19,7 +19,7 @@ export const componentSpecCreateInstanceField = {
   },
   resolve: async (_parent, { componentHash }, { natsContext }) => {
     const instanceId = ulid();
-    const subject = createBasicSubject(natsEvents['*'].component_service['*']['*'].cmd.componentInstance.create.v1['*'])
+    const subject = createBasicSubject(natsEvents['*'].component_service['*']['*'].cmd.componentInstance.create.v1['*']).forPublish()
       .env('prod')
 
     await natsContext.publish(
@@ -43,7 +43,7 @@ export const componentInstanceStartField = {
     instanceId: { type: new GraphQLNonNull(GraphQLString) },
   },
   resolve: async (_parent, { instanceId }, { natsContext }) => {
-    const subject = createBasicSubject(natsEvents['*'].component_service['*']['*'].cmd.componentInstance.start.v1['*'])
+    const subject = createBasicSubject(natsEvents['*'].component_service['*']['*'].cmd.componentInstance.start.v1['*']).forPublish()
       .env('prod')
 
     await natsContext.publish(
@@ -82,7 +82,7 @@ export const componentInstanceProvideDataField = {
       throw new Error('Type is required for provide data');
     }
 
-    const subject = createBasicSubject(natsEvents['*'].component_service['*']['*'].evt.componentInstance.computeResultDone.v1['*'])
+    const subject = createBasicSubject(natsEvents['*'].component_service['*']['*'].evt.componentInstance.computeResultDone.v1['*']).forPublish()
       .env('prod')
 
     await natsContext.publish(
