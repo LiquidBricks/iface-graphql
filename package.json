@@ -18,8 +18,8 @@
     "test": "node --test \"test/**/*.mjs\""
   },
   "dependencies": {
-    "@liquid-bricks/lib-nats-context": "github:LiquidBricks/lib-nats-context#345a6a5d748e253bee39e3dd1ca33719a35f9ad3",
-    "@liquid-bricks/lib-nats-subject": "github:LiquidBricks/lib-nats-subject#ad70a82d59027ee6b2349366f50b14c37f58ef74",
+    "@liquid-bricks/lib-nats-context": "github:LiquidBricks/lib-nats-context#756ba42db21d10d311892cd21aa7b56243f6c2c0",
+    "@liquid-bricks/lib-nats-subject": "github:LiquidBricks/lib-nats-subject#91d8d79aee3797a332b4d3f4fd0254b9ac727d04",
     "@liquid-bricks/spec-domain": "github:LiquidBricks/spec-domain#b75596e2a31ecc6e0f2b092098dac01b58dec3f2",
     "graphql": "^16.12.0",
     "ulid": "^3.0.0"
