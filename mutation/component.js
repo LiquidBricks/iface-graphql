@@ -82,7 +82,7 @@ export const componentInstanceProvideDataField = {
       throw new Error('Type is required for provide data');
     }
 
-    const subject = createBasicSubject(natsEvents['*'].component_service['*']['*'].evt.componentInstance.computeResultDone.v1['*']).forPublish()
+    const subject = createBasicSubject(natsEvents['*'].component_service['*'].function_result.evt.component.compute_function.v1['*']).forPublish()
       .env('prod')
 
     await natsContext.publish(
