@@ -19,7 +19,7 @@ test('componentInstanceProvideData publishes typed payload', async () => {
     instanceId: 'instance-1',
     stateId: 'state-1',
     name: 'Data Node',
-    type: 'DATA',
+    type: 'data',
     payload: '{"count":2,"active":false}',
   }
 
@@ -40,7 +40,7 @@ test('componentInstanceProvideData publishes typed payload', async () => {
 
   const { subject, data } = published[0]
   const parsed = JSON.parse(data)
-  const expectedSubject = createBasicSubject(natsEvents['*'].component_service['*'].function_result.evt.component.compute_function.v1['*']).forPublish()
+  const expectedSubject = createBasicSubject(natsEvents['*'].component_service['*'].function_result.evt.component.compute_function.v1.data).forPublish()
     .env('prod')
     .build()
 

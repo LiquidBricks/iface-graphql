@@ -72,23 +72,44 @@ export const componentInstanceProvideDataField = {
     }
 
     const safeName = String(name || '').trim();
-    const safeType = String(type || '').trim().toLowerCase();
 
     if (!safeName) {
       throw new Error('Name is required for provide data');
     }
 
-    if (!safeType) {
-      throw new Error('Type is required for provide data');
+    switch (type) {
+      case 'data': {
+        const subject = createBasicSubject(natsEvents['*'].component_service['*'].function_result.evt.component.compute_function.v1.data).forPublish()
+          .env('prod')
+
+        await natsContext.publish(
+          subject.build(),
+          JSON.stringify({ data: { instanceId, stateId, name: safeName, type, result: parsed } })
+        )
+        return { ok: true };
+      }
+      case 'gate': {
+        const subject = createBasicSubject(natsEvents['*'].component_service['*'].function_result.evt.component.compute_function.v1.gate).forPublish()
+          .env('prod')
+
+        await natsContext.publish(
+          subject.build(),
+          JSON.stringify({ data: { instanceId, stateId, name: safeName, type, result: parsed } })
+        )
+        return { ok: true };
+      }
+      case 'task': {
+        const subject = createBasicSubject(natsEvents['*'].component_service['*'].function_result.evt.component.compute_function.v1.task).forPublish()
+          .env('prod')
+
+        await natsContext.publish(
+          subject.build(),
+          JSON.stringify({ data: { instanceId, stateId, name: safeName, type, result: parsed } })
+        )
+        return { ok: true };
+      }
+      default:
+        throw new Error('Unsupported provide data type: ' + type);
     }
-
-    const subject = createBasicSubject(natsEvents['*'].component_service['*'].function_result.evt.component.compute_function.v1['*']).forPublish()
-      .env('prod')
-
-    await natsContext.publish(
-      subject.build(),
-      JSON.stringify({ data: { instanceId, stateId, name: safeName, type: safeType, result: parsed } })
-    )
-    return { ok: true };
   },
 };
