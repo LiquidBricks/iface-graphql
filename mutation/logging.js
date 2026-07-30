@@ -1,3 +1,4 @@
+import { CLIENT_LOG_ERROR, CLIENT_LOG_FATAL, CLIENT_LOG_WARN } from '@liquid-bricks/lib-diagnostics/codes'
 import { GraphQLBoolean, GraphQLEnumType, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql'
 
 
@@ -51,16 +52,16 @@ export const clientLogField = {
           break
         case 'warn':
           // diagnostics.warn logs without throwing when first arg is false
-          diagnostics.warn(false, 'CLIENT_LOG_WARN', message, meta)
+          diagnostics.warn(false, CLIENT_LOG_WARN, message, meta)
           break
         case 'fatal':
           // treat fatal as non-throwing log event
-          diagnostics.warn(false, 'CLIENT_LOG_FATAL', message, meta)
+          diagnostics.warn(false, CLIENT_LOG_FATAL, message, meta)
           break
         case 'error':
         default:
           // Do not throw; record as warning-level diagnostic with error code
-          diagnostics.warn(false, 'CLIENT_LOG_ERROR', message, meta)
+          diagnostics.warn(false, CLIENT_LOG_ERROR, message, meta)
           break
       }
     } catch (err) {
