@@ -84,7 +84,7 @@ export const componentInstanceProvideDataField = {
 
         await natsContext.publish(
           subject.build(),
-          JSON.stringify({ data: { instanceId, stateId, name: safeName, type, result: parsed } })
+          JSON.stringify({ data: { instanceId, stateId, name: safeName, type, result: parsed, status: 'provided' } })
         )
         return { ok: true };
       }
@@ -94,7 +94,7 @@ export const componentInstanceProvideDataField = {
 
         await natsContext.publish(
           subject.build(),
-          JSON.stringify({ data: { instanceId, stateId, name: safeName, type, result: parsed } })
+          JSON.stringify({ data: { instanceId, stateId, name: safeName, type, result: parsed, status: 'provided' } })
         )
         return { ok: true };
       }
@@ -104,7 +104,7 @@ export const componentInstanceProvideDataField = {
 
         await natsContext.publish(
           subject.build(),
-          JSON.stringify({ data: { instanceId, stateId, name: safeName, type, result: parsed } })
+          JSON.stringify({ data: { instanceId, stateId, name: safeName, type, result: parsed, status: 'provided' } })
         )
         return { ok: true };
       }

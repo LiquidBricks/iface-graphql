@@ -51,6 +51,7 @@ test('componentInstanceProvideData publishes typed payload', async () => {
     name: variables.name,
     type: 'data',
     result: { count: 2, active: false },
+    status: 'provided',
   })
   assert.equal(typeof parsed.data.result.count, 'number')
   assert.equal(typeof parsed.data.result.active, 'boolean')
