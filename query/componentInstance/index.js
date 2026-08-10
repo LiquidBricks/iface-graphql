@@ -122,6 +122,10 @@ export const componentSpecInstanceType = new GraphQLObjectType({
       type: componentSpecType,
       resolve: async (id, _args, { g }) => (await g.V(id).out(domain.edge.instance_of.componentInstance_component.constants.LABEL).id()).shift()
     },
+    parent: {
+      type: componentSpecInstanceType,
+      resolve: async (id, _args, { g }) => loadInstanceParent({ g, instanceId: id }),
+    },
     state: {
       type: GraphQLString,
       resolve: async (id, _args, { g }) => fetchInstanceState(id, g),
@@ -293,6 +297,25 @@ async function loadInstanceGates({ g, instanceId }) {
   );
 
   return nodes.filter(Boolean);
+}
+
+async function loadInstanceParent({ g, instanceId }) {
+  if (!g || !instanceId) return null;
+
+  const [importParentId] = await g
+    .V(instanceId)
+    .in(domain.edge.uses_import.importInstanceRef_componentInstance.constants.LABEL)
+    .in(domain.edge.uses_import.componentInstance_importInstanceRef.constants.LABEL)
+    .id();
+  if (importParentId) return importParentId;
+
+  const [gateParentId] = await g
+    .V(instanceId)
+    .in(domain.edge.uses_gate.gateInstanceRef_componentInstance.constants.LABEL)
+    .in(domain.edge.uses_gate.componentInstance_gateInstanceRef.constants.LABEL)
+    .id();
+
+  return gateParentId ?? null;
 }
 
 async function fetchInstanceState(instanceId, g) {
